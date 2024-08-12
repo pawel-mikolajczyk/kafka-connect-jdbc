@@ -64,6 +64,7 @@ public class MySqlDatabaseDialect extends GenericDatabaseDialect {
    * @param config the connector configuration; may not be null
    */
   public MySqlDatabaseDialect(AbstractConfig config) {
+//    super(config, new IdentifierRules("___NOT_USED___", "`", "`"));
     super(config, new IdentifierRules(".", "`", "`"));
   }
 

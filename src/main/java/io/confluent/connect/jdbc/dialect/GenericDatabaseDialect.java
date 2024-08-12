@@ -362,6 +362,8 @@ public class GenericDatabaseDialect implements DatabaseDialect {
 
   @Override
   public TableId parseTableIdentifier(String fqn) {
+//    backquotes here does not make sense as with backquotes in Connectors class it crashed on UPDATE statement syntax having too much backquotes (twice backquotes)
+//    return new TableId(null, null, fqn);
     List<String> parts = identifierRules().parseQualifiedIdentifier(fqn);
     if (parts.isEmpty()) {
       throw new IllegalArgumentException("Invalid fully qualified name: '" + fqn + "'");
@@ -556,7 +558,8 @@ public class GenericDatabaseDialect implements DatabaseDialect {
     try (ResultSet rs = connection.getMetaData().getTables(
         tableId.catalogName(),
         tableId.schemaName(),
-        tableId.tableName(),
+//        tableId.tableName(),
+        "`" + tableId.tableName() + "`",
         tableTypes
     )) {
       final boolean exists = rs.next();
@@ -806,7 +809,7 @@ public class GenericDatabaseDialect implements DatabaseDialect {
   ) throws SQLException {
     Map<ColumnId, ColumnDefinition> columnDefns = describeColumns(connection, tableId.catalogName(),
                                                                   tableId.schemaName(),
-                                                                  tableId.tableName(), null
+                                                                  "`" + tableId.tableName() + "`", null
     );
     if (columnDefns.isEmpty()) {
       return null;
